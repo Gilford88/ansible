@@ -38,17 +38,38 @@ resource "digitalocean_droplet" "web_server" {
     private_key = "${file(var.PVT_KEY)}"
     timeout = "2m"
   }
-
+}
 
   provisioner "remote-exec" {
     inline = [
-      "apt install wget unzip apache2 -y",
-      "systemctl start apache2",
-      "systemctl enable apache2",
-      "wget https://www.tooplate.com/zip-templates/2117_infinite_loop.zip",
-      "unzip -o 2117_infinite_loop.zip",
-      "cp -r 2117_infinite_loop/* /var/www/html/",
-      "systemctl restart apache2"
+      "apt update",
+      "apt install ansible -y",
+      "useradd james"
+      "echo 'james  ALL=(ALL:ALL) ALL' >> /etc/sudoers"
+    ]
+  }
+
+resource "digitalocean_droplet" "ansible_server" {
+  count  = 1
+  image  = var.IMAGE
+  name   = "ansible-host"
+  region = var.REGION
+  size   = "s-1vcpu-1gb"
+  ssh_keys = [var.SSH_FINGERPRINT]
+  tags   = ["Web-server"]
+
+  connection {
+    host = self.ipv4_address
+    user = "root"
+    type = "ssh"
+    private_key = "${file(var.PVT_KEY)}"
+    timeout = "2m"
+  }
+
+    provisioner "remote-exec" {
+    inline = [
+      "useradd james",
+      "echo /'james  ALL=(ALL:ALL) ALL/' >> /etc/sudoers"
     ]
   }
 

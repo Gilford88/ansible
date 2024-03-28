@@ -25,6 +25,7 @@ SSH_FINGERPRINT = var.SSH_FINGERPRINT
 PVT_KEY = var.PVT_KEY
 }
 
+
 output "server-ids" {
   value = "${module.droplet.server-ids}"
 }
