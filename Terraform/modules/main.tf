@@ -22,10 +22,10 @@ variable "PVT_KEY" {
     }
   
 
-resource "digitalocean_droplet" "web_server" {
-  count  = var.COUNT
+resource "digitalocean_droplet" "Ubuntu-server" {
+  count  = 1
   image  = var.IMAGE
-  name   = "web-server-${count.index + 1}"
+  name   = "web-server-Ubuntu"
   region = var.REGION
   size   = "s-1vcpu-1gb"
   ssh_keys = [var.SSH_FINGERPRINT]
@@ -40,14 +40,23 @@ resource "digitalocean_droplet" "web_server" {
   }
 }
 
-  provisioner "remote-exec" {
-    inline = [
-      "apt update",
-      "apt install ansible -y",
-      "useradd james"
-      "echo 'james  ALL=(ALL:ALL) ALL' >> /etc/sudoers"
-    ]
+resource "digitalocean_droplet" "CentOS-server" {
+  count  = 1
+  image  = "centos-stream-9-x64"
+  name   = "web-server-centOS"
+  region = var.REGION
+  size   = "s-1vcpu-1gb"
+  ssh_keys = [var.SSH_FINGERPRINT]
+  tags   = ["Web-server"]
+
+  connection {
+    host = self.ipv4_address
+    user = "root"
+    type = "ssh"
+    private_key = "${file(var.PVT_KEY)}"
+    timeout = "2m"
   }
+}
 
 resource "digitalocean_droplet" "ansible_server" {
   count  = 1
@@ -75,11 +84,4 @@ resource "digitalocean_droplet" "ansible_server" {
 
 }
 
-output "server-ids" {
-  value = digitalocean_droplet.web_server[*].id
-}
-
-output "server-ips" {
-  value = digitalocean_droplet.web_server[*].ipv4_address
-}
 

@@ -26,13 +26,5 @@ PVT_KEY = var.PVT_KEY
 }
 
 
-output "server-ids" {
-  value = "${module.droplet.server-ids}"
-}
-
-output "server-ips" {
-  value = "${module.droplet.server-ips}"
-}
-
 
 
