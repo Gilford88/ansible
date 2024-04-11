@@ -5,12 +5,14 @@
   pre_tasks:
 
   - name: install updates (CentOS)
+    tags: always
     dnf:
       update_only: yes
       update_cache: yes
     when: ansible_distribution == "CentOS"
   
   - name: install updates (Ubuntu)
+    tags: always
     apt:
       upgrade: dist
       update_cache: yes
@@ -20,38 +22,21 @@
   become: true
   tasks: 
 
-  - name: update repo index
+  - name: install apache2 and php for Ubuntu servers
+    tags: apache,apache2,ubuntu  
     apt:
-      update_cache: yes
-    when: ansible_distribution == "Ubuntu"
-
-  - name: install apache2 package
-    apt:
-      name: apache2
+      name: 
+        - apache2
+        - libapache2-mod-php  
       state: latest
     when: ansible_distribution == "Ubuntu"
 
-  - name: add php support for apache
-    apt:
-      name: libapache2-mod-php
-      state: latest
-    when: ansible_distribution == "Ubuntu"
-
-
-  - name: update repo index
-    dnf:
-      update_cache: yes
-    when: ansible_distribution == "CentOS"
-
-  - name: install httpd package
+  - name: install apache and php for CentOS servers
+    tags: apache,centos,httpd
     dnf: 
-      name: httpd
-      state: latest
-    when: ansible_distribution == "CentOS"
-
-  - name: add php support for httpd
-    dnf:
-      name: php
+      name: 
+        - httpd
+        - php
       state: latest
     when: ansible_distribution == "CentOS"
 
@@ -60,12 +45,14 @@
   tasks: 
 
   - name: install mariadb package (CentOS)
+    tags: db,mariadb,centos
     dnf: 
       name: mariadb
       state: latest
-    when: ansible_distribution = "CentOS"
+    when: ansible_distribution == "CentOS"
 
   - name: install mariadb package (Ubuntu)
+    tags: db,mariadb,ubuntu
     apt:
       name: mariadb-server
       state: latest
