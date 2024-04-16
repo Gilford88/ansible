@@ -7,16 +7,26 @@
   - name: install updates (CentOS)
     tags: always
     dnf:
-      update_only: yes
       update_cache: yes
+    changed_when: false    
     when: ansible_distribution == "CentOS"
   
   - name: install updates (Ubuntu)
     tags: always
     apt:
-      upgrade: dist
       update_cache: yes
+    changed_when: false
     when: ansible_distribution == "Ubuntu"
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: add ssh key for james
+    tags: always
+    authorized_key:
+      user: james
+      key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCa075ugKrNgZXVLj21w1xOlg+fEUl6Yf/RM3w/yPS0k2HxayEWKmmdHdy+QyKbtey/ywhZZZipb/cMym+KF7ugIcemmytcQ3u8t11rcAS58jmzzIuoKk1NTx3C0mK5bNZWiWP73L00LzWJvcT3wac4JAn5/4GiDMN0R7VqgnToGulbjk6lEROaSJibu1T4dd9zfvdPfuTD0j/xo4FTTkYA0kNfASjPckf3jas4xAoL/Z7RQGnbKmnFobozCPkX5/dpuajvj7PeKeki4wvE87qoDJ1bCIBkjKZh/sN9vSY0w0vPOVpnR7M+0wK55D24whApWGGE6LormCffyBIfw9dNcWFNgfC/xLdE0/hAJ4q7lYKwq/aJaoblyDxL6Mh2lj7z+q2pt65rWaKkHuG7URuTcWasePZBOnqDP40Qng9Wi5h7ohnWviDKUKCPwzo9Oyb/Ol6J8gHQZFSnE+RxCXDQuH6IC6vHMndq2a0ZFPSFR11m1eBuJXoqiZVecbiU2xc= 44790@James"
 
 - hosts: workstations
   become: true
